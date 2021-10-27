@@ -35,7 +35,7 @@ operación solicitada
 """
 
 def printSightingsByCity(total, city):
-    return None
+    pass
 
 def printMenu():
     print("\n")
@@ -61,7 +61,7 @@ while True:
     elif int(inputs[0]) == 2:
         print("\nCargando información de avistamientos de ovnis ....")
         controller.load_UFOs(cont)
-        print('Avistamientos de ovnis cargados: ' + str(controller.crimesSize(cont)))
+        print('Avistamientos de ovnis cargados: ' + str(controller.UFOsSize(cont)))
         print('Altura del arbol: ' + str(controller.indexHeight(cont)))
         print('Elementos en el arbol: ' + str(controller.indexSize(cont)))
         print('Menor Llave: ' + str(controller.minKey(cont)))

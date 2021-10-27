@@ -37,11 +37,32 @@ def init_catalog():
 
 # Funciones para la carga de datos
 def load_UFOs(catalog):
-    filename = cf.data_dir + 'UFOS/UFOS-utf8-small'
+    filename = cf.data_dir + 'UFOS-utf8-small.csv'
     input_file = csv.DictReader(open(filename, encoding='utf-8'))
     for ufo_data in input_file:
-        model.add_ufo(catalog,ufo_data)
+        model.add_ufo(catalog, ufo_data)
 
 # Funciones de ordenamiento
 
 # Funciones de consulta sobre el catálogo
+def UFOsSize(analyzer):
+    return model.UFOsSize(analyzer)
+
+def indexHeight(analyzer):
+    return model.indexHeight(analyzer)
+
+
+def indexSize(analyzer):
+    return model.indexSize(analyzer)
+
+
+def minKey(analyzer):
+    return model.minKey(analyzer)
+
+
+def maxKey(analyzer):
+    return model.maxKey(analyzer)
+
+
+def getSightingsByCity(analyzer, city):
+    return model.getSightingsByCity(analyzer, city)
