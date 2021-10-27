@@ -26,7 +26,7 @@ import controller
 from DISClib.ADT import list as lt
 from DISClib.ADT import orderedmap as om
 assert cf
-
+from prettytable import PrettyTable
 
 """
 La vista se encarga de la interacción con el usuario
@@ -47,36 +47,33 @@ def printSightingsByCity(total, city):
     if sightings > 6:
         dates = om.keySet(date_index)
         first_dates = lt.subList(dates,1,3)
+        imprimir= PrettyTable()
+        imprimir.field_names=['datetime', 'city','country','duration (seconds)','shape']
         for date in lt.iterator(first_dates):
             ufo_list = om.get(date_index,date)['value']
             for ufo_data in lt.iterator(ufo_list):
-                print('Fecha y Hora:', ufo_data['datetime'], '\n',
-                    'Ciudad:',ufo_data['city'],'\n',
-                    'País:',ufo_data['country'],'\n',
-                    'Duración (segundos):',ufo_data['duration (seconds)'],'\n',
-                    'Forma',ufo_data['shape'])
-                print('-'*80)
+                imprimir.add_row([ ufo_data['datetime'], ufo_data['city'],ufo_data['country'],
+                                ufo_data['duration (seconds)'],ufo_data['shape']])
+        
+                
+                
         last_dates = lt.subList(dates,lt.size(dates)-2,3)
         for date in lt.iterator(last_dates):
             ufo_list = om.get(date_index,date)['value']
             for ufo_data in lt.iterator(ufo_list):
-                print('Fecha y Hora:', ufo_data['datetime'], '\n',
-                    'Ciudad:',ufo_data['city'],'\n',
-                    'País:',ufo_data['country'],'\n',
-                    'Duración (segundos):',ufo_data['duration (seconds)'],'\n',
-                    'Forma',ufo_data['shape'])
-                print('-'*80)
+                imprimir.add_row([ ufo_data['datetime'], ufo_data['city'],ufo_data['country'],
+                                ufo_data['duration (seconds)'],ufo_data['shape']])
+        print(imprimir)
     else:
         dates = om.keySet(date_index)
+        imprimir= PrettyTable()
+        imprimir.field_names=['datetime', 'city','country','duration (seconds)','shape']
         for date in lt.iterator(dates):
             ufo_list = om.get(date_index,date)['value']
             for ufo_data in lt.iterator(ufo_list):
-                print('Fecha y Hora:', ufo_data['datetime'], '\n',
-                    'Ciudad:',ufo_data['city'],'\n',
-                    'País:',ufo_data['country'],'\n',
-                    'Duración (segundos):',ufo_data['duration (seconds)'],'\n',
-                    'Forma',ufo_data['shape'])
-                print('-'*80)
+                imprimir.add_row([ ufo_data['datetime'], ufo_data['city'],ufo_data['country'],
+                                ufo_data['duration (seconds)'],ufo_data['shape']])
+        print(imprimir)
 
 
 def printMenu():
