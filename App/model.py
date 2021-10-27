@@ -28,6 +28,7 @@
 import config as cf
 from DISClib.ADT import list as lt
 from DISClib.ADT import map as mp
+from DISClib.ADT import orderedmap as om
 from DISClib.DataStructures import mapentry as me
 from DISClib.Algorithms.Sorting import shellsort as sa
 assert cf
@@ -38,13 +39,43 @@ los mismos.
 """
 
 # Construccion de modelos
-
+def init_catalog():
+    """
+    Inicializa el catálogo de informacion sobre UFOs.
+    """
+    catalog = {'UFOs':lt.newList(),'date_index':None}
+    return catalog
 # Funciones para agregar informacion al catalogo
+def add_ufo(catalog,ufo_data):
+    lt.addLast(catalog['UFOs'],ufo_data)
 
 # Funciones para creacion de datos
+def dates_index(catalog):
+    catalog['dateIndex'] = om.newMap(omaptype='RBT', comparefunction=compareDates)
+
+def add_date_index(catalog,ufo_data):
+    date_index = catalog['dateIndex']
+    date_info = ufo_data['datetime']
+    if om.contains(date_index,date_info):
+        list_UFOs = om.get(date_index,date_info)['value']
+        lt.addLast(list_UFOs,ufo_data)
+    else:
+        list_UFOs = lt.newList()
+        lt.addLast(list_UFOs,ufo_data)
+        om.put(date_index,date_info,list_UFOs) 
 
 # Funciones de consulta
 
 # Funciones utilizadas para comparar elementos dentro de una lista
+def compareDates(date1, date2):
+    """
+    Compara dos fechas
+    """
+    if (date1 == date2):
+        return 0
+    elif (date1 > date2):
+        return 1
+    else:
+        return -1
 
 # Funciones de ordenamiento

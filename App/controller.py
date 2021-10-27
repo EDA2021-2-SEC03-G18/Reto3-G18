@@ -22,6 +22,8 @@
 
 import config as cf
 import model
+from DISClib.ADT import list as lt
+from DISClib.ADT import map as mp
 import csv
 
 
@@ -30,8 +32,15 @@ El controlador se encarga de mediar entre la vista y el modelo.
 """
 
 # Inicialización del Catálogo de libros
+def init_catalog():
+    return model.init_catalog()
 
 # Funciones para la carga de datos
+def load_UFOs(catalog):
+    filename = cf.data_dir + 'UFOS/UFOS-utf8-small'
+    input_file = csv.DictReader(open(filename, encoding='utf-8'))
+    for ufo_data in input_file:
+        model.add_ufo(catalog,ufo_data)
 
 # Funciones de ordenamiento
 
