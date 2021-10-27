@@ -109,8 +109,8 @@ def maxKey(catalog):
 
 def getSightingsByCity(catalog, city):
     city_index = catalog['city_index']
-    date_index = mp.get(city_index,city)['value']
-    return mp.size(city_index), date_index
+    date_index = om.get(city_index,city)['value']
+    return om.size(city_index), date_index
         
 
 # Funciones utilizadas para comparar elementos dentro de una lista

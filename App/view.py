@@ -38,11 +38,11 @@ operación solicitada
 def printSightingsByCity(total, city):
     num_cities,date_index = total
     print('Hay un total de',num_cities,'donde se presentaron avistamientos de OVNIs.')
-    print('-'*50,'\n')
+    print('-'*80,'\n')
     sightings = om.size(date_index)
-    print('-'*50)
+    print('-'*80)
     print('Para la ciudad de',city,'se han presentado un total de',sightings,'avistamientos.\n')
-    print('-'*50)
+    print('-'*80)
 
     if sightings > 6:
         dates = om.keySet(date_index)
@@ -55,7 +55,7 @@ def printSightingsByCity(total, city):
                     'País:',ufo_data['country'],'\n',
                     'Duración (segundos):',ufo_data['duration (seconds)'],'\n',
                     'Forma',ufo_data['shape'])
-                print('-'*50)
+                print('-'*80)
         last_dates = lt.subList(dates,lt.size(dates)-2,3)
         for date in lt.iterator(last_dates):
             ufo_list = om.get(date_index,date)['value']
@@ -65,7 +65,7 @@ def printSightingsByCity(total, city):
                     'País:',ufo_data['country'],'\n',
                     'Duración (segundos):',ufo_data['duration (seconds)'],'\n',
                     'Forma',ufo_data['shape'])
-                print('-'*50)
+                print('-'*80)
     else:
         dates = om.keySet(date_index)
         for date in lt.iterator(dates):
@@ -76,7 +76,7 @@ def printSightingsByCity(total, city):
                     'País:',ufo_data['country'],'\n',
                     'Duración (segundos):',ufo_data['duration (seconds)'],'\n',
                     'Forma',ufo_data['shape'])
-                print('-'*50)
+                print('-'*80)
 
 
 def printMenu():
@@ -104,18 +104,21 @@ while True:
         print("\nCargando información de avistamientos de ovnis ....")
         controller.load_UFOs(cont)
         print('Avistamientos de ovnis cargados: ' + str(controller.UFOsSize(cont)))
+        input('Presione "Enter" para continuar.')
     elif int(inputs[0]) == 3:
         print("\nBuscando y listando cronológicamente los avistamientos en una ciudad")
         city = input("Nombre de la ciudad a consultar: ")
+        controller.create_city_index(cont)
         total = controller.getSightingsByCity(cont, city)
-        print('-'*50)
+        print('-'*80)
         print('Altura del arbol: ' + str(controller.indexHeight(cont)))
         print('Elementos en el arbol: ' + str(controller.indexSize(cont)))
         print('Menor Llave: ' + str(controller.minKey(cont)))
         print('Mayor Llave: ' + str(controller.maxKey(cont)))
-        print('-'*50,'\n')
-        print('-'*50)
+        print('-'*80,'\n')
+        print('-'*80)
         printSightingsByCity(total, city)
+        input('Presione "Enter" para continuar.')
 
     else:
         sys.exit(0)
