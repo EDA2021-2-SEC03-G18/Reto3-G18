@@ -42,27 +42,29 @@ def load_UFOs(catalog):
     for ufo_data in input_file:
         model.add_ufo(catalog, ufo_data)
 
+def create_city_index(catalog):
+    model.create_city_index(catalog)
+
 # Funciones de ordenamiento
 
 # Funciones de consulta sobre el catálogo
-def UFOsSize(analyzer):
-    return model.UFOsSize(analyzer)
+def UFOsSize(catalog):
+    return model.UFOsSize(catalog)
 
-def indexHeight(analyzer):
-    return model.indexHeight(analyzer)
-
-
-def indexSize(analyzer):
-    return model.indexSize(analyzer)
+def indexHeight(catalog):
+    return model.indexHeight(catalog)
 
 
-def minKey(analyzer):
-    return model.minKey(analyzer)
+def indexSize(catalog):
+    return model.indexSize(catalog)
 
 
-def maxKey(analyzer):
-    return model.maxKey(analyzer)
+def minKey(catalog):
+    return model.minKey(catalog)
+
+def maxKey(catalog):
+    return model.maxKey(catalog)
 
 
-def getSightingsByCity(analyzer, city):
-    return model.getSightingsByCity(analyzer, city)
+def getSightingsByCity(catalog, city):
+    return model.getSightingsByCity(catalog, city)

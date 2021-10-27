@@ -24,6 +24,7 @@ import config as cf
 import sys
 import controller
 from DISClib.ADT import list as lt
+from DISClib.ADT import orderedmap as om
 assert cf
 
 
@@ -35,7 +36,48 @@ operación solicitada
 """
 
 def printSightingsByCity(total, city):
-    pass
+    num_cities,date_index = total
+    print('Hay un total de',num_cities,'donde se presentaron avistamientos de OVNIs.')
+    print('-'*50,'\n')
+    sightings = om.size(date_index)
+    print('-'*50)
+    print('Para la ciudad de',city,'se han presentado un total de',sightings,'avistamientos.\n')
+    print('-'*50)
+
+    if sightings > 6:
+        dates = om.keySet(date_index)
+        first_dates = lt.subList(dates,1,3)
+        for date in lt.iterator(first_dates):
+            ufo_list = om.get(date_index,date)['value']
+            for ufo_data in lt.iterator(ufo_list):
+                print('Fecha y Hora:', ufo_data['datetime'], '\n',
+                    'Ciudad:',ufo_data['city'],'\n',
+                    'País:',ufo_data['country'],'\n',
+                    'Duración (segundos):',ufo_data['duration (seconds)'],'\n',
+                    'Forma',ufo_data['shape'])
+                print('-'*50)
+        last_dates = lt.subList(dates,lt.size(dates)-2,3)
+        for date in lt.iterator(last_dates):
+            ufo_list = om.get(date_index,date)['value']
+            for ufo_data in lt.iterator(ufo_list):
+                print('Fecha y Hora:', ufo_data['datetime'], '\n',
+                    'Ciudad:',ufo_data['city'],'\n',
+                    'País:',ufo_data['country'],'\n',
+                    'Duración (segundos):',ufo_data['duration (seconds)'],'\n',
+                    'Forma',ufo_data['shape'])
+                print('-'*50)
+    else:
+        dates = om.keySet(date_index)
+        for date in lt.iterator(dates):
+            ufo_list = om.get(date_index,date)['value']
+            for ufo_data in lt.iterator(ufo_list):
+                print('Fecha y Hora:', ufo_data['datetime'], '\n',
+                    'Ciudad:',ufo_data['city'],'\n',
+                    'País:',ufo_data['country'],'\n',
+                    'Duración (segundos):',ufo_data['duration (seconds)'],'\n',
+                    'Forma',ufo_data['shape'])
+                print('-'*50)
+
 
 def printMenu():
     print("\n")
@@ -62,14 +104,17 @@ while True:
         print("\nCargando información de avistamientos de ovnis ....")
         controller.load_UFOs(cont)
         print('Avistamientos de ovnis cargados: ' + str(controller.UFOsSize(cont)))
-        print('Altura del arbol: ' + str(controller.indexHeight(cont)))
-        print('Elementos en el arbol: ' + str(controller.indexSize(cont)))
-        print('Menor Llave: ' + str(controller.minKey(cont)))
-        print('Mayor Llave: ' + str(controller.maxKey(cont)))
     elif int(inputs[0]) == 3:
         print("\nBuscando y listando cronológicamente los avistamientos en una ciudad")
         city = input("Nombre de la ciudad a consultar: ")
         total = controller.getSightingsByCity(cont, city)
+        print('-'*50)
+        print('Altura del arbol: ' + str(controller.indexHeight(cont)))
+        print('Elementos en el arbol: ' + str(controller.indexSize(cont)))
+        print('Menor Llave: ' + str(controller.minKey(cont)))
+        print('Mayor Llave: ' + str(controller.maxKey(cont)))
+        print('-'*50,'\n')
+        print('-'*50)
         printSightingsByCity(total, city)
 
     else:
