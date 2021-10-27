@@ -34,10 +34,18 @@ se hace la solicitud al controlador para ejecutar la
 operación solicitada
 """
 
+def printSightingsByCity(total, city):
+    return None
+
 def printMenu():
+    print("\n")
+    print("*******************************************")
     print("Bienvenido")
-    print("1- Cargar información en el catálogo")
-    print("2- ")
+    print("1- Inicializar Analizador")
+    print("2- Cargar información en el catálogo")
+    print("3- Contar los avistamientos en una ciudad")
+    print("0- Salir")
+    print("*******************************************")
 
 catalog = None
 
@@ -48,10 +56,21 @@ while True:
     printMenu()
     inputs = input('Seleccione una opción para continuar\n')
     if int(inputs[0]) == 1:
-        print("Cargando información de los archivos ....")
-
+        print("Inicializando Catálogo ....")
+        cont = controller.init_catalog()
     elif int(inputs[0]) == 2:
-        pass
+        print("\nCargando información de avistamientos de ovnis ....")
+        controller.load_UFOs(cont)
+        print('Avistamientos de ovnis cargados: ' + str(controller.crimesSize(cont)))
+        print('Altura del arbol: ' + str(controller.indexHeight(cont)))
+        print('Elementos en el arbol: ' + str(controller.indexSize(cont)))
+        print('Menor Llave: ' + str(controller.minKey(cont)))
+        print('Mayor Llave: ' + str(controller.maxKey(cont)))
+    elif int(inputs[0]) == 3:
+        print("\nBuscando y listando cronológicamente los avistamientos en una ciudad")
+        city = input("Nombre de la ciudad a consultar: ")
+        total = controller.getSightingsByCity(cont, city)
+        printSightingsByCity(total, city)
 
     else:
         sys.exit(0)
