@@ -45,6 +45,12 @@ def load_UFOs(catalog):
 def create_city_index(catalog):
     model.create_city_index(catalog)
 
+def create_date_index(catalog):
+    model.create_date_index(catalog)
+
+def create_coord_index(catalog):
+    model.create_coord_index(catalog)
+
 # Funciones de ordenamiento
 
 # Funciones de consulta sobre el catálogo
@@ -68,3 +74,11 @@ def maxKey(catalog):
 
 def getSightingsByCity(catalog, city):
     return model.getSightingsByCity(catalog, city)
+
+
+def getSightingsByDate(catalog, initial_date, final_date):
+    return model.getSightingsByDate(catalog, initial_date,final_date)
+
+
+def getSightingsByGeography(catalog,longitude_min,longitude_max,latitude_min,latitude_max):
+    return model.getSightingsByGeography(catalog,longitude_min,longitude_max,latitude_min,latitude_max)

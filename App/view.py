@@ -75,6 +75,76 @@ def printSightingsByCity(total, city):
                                 ufo_data['duration (seconds)'],ufo_data['shape']])
         print(imprimir)
 
+def printSightingsByDate(total,initial_date,final_date):
+    dates,final_dates = total
+    print('Hay',lt.size(final_dates),'avistamiento(s) de OVNI(s) como más antiguo(s).')
+    sightings = lt.size(dates)
+    if sightings > 0:
+        print('Además, se encontraron un total de',sightings,'avistamientos entre', initial_date,'y',final_date + '.\n')
+        imprimir= PrettyTable()
+        imprimir.field_names=['date', 'count']
+        for ufo_data in lt.iterator(final_dates):
+            imprimir.add_row([ ufo_data['datetime'][0:11],lt.size(final_dates)])
+            break
+        print(imprimir)
+    print('-'*80)
+
+    if sightings > 6:
+        first_dates = lt.subList(dates,1,3)
+        imprimir= PrettyTable()
+        imprimir.field_names=['datetime', 'city','state','country','duration (seconds)','shape']
+        for ufo_data in lt.iterator(first_dates):
+            imprimir.add_row([ ufo_data['datetime'], ufo_data['city'],ufo_data['state'],ufo_data['country'],
+                            ufo_data['duration (seconds)'],ufo_data['shape']])
+        
+                
+                
+        last_dates = lt.subList(dates,lt.size(dates)-2,3)
+        for ufo_data in lt.iterator(last_dates):
+            imprimir.add_row([ ufo_data['datetime'], ufo_data['city'],ufo_data['state'],ufo_data['country'],
+                            ufo_data['duration (seconds)'],ufo_data['shape']])
+        print(imprimir)
+    elif sightings > 0:
+        imprimir= PrettyTable()
+        imprimir.field_names=['datetime', 'city','state','country','duration (seconds)','shape']
+        for ufo_data in lt.iterator(dates):
+            imprimir.add_row([ ufo_data['datetime'], ufo_data['city'],ufo_data['state'],ufo_data['country'],
+                            ufo_data['duration (seconds)'],ufo_data['shape']])
+        print(imprimir)
+    else:
+        print('No hay avistamientos dentro del rango de fechas dado.')
+
+
+def printSightingsByGeography(total):
+    sightings = lt.size(total)
+    if sightings > 0:
+        print('Se encontraron un total de',sightings,'avistamientos en la zona geográfica.\n')
+    print('-'*80)
+
+    if sightings > 10:
+        first_data = lt.subList(total,1,5)
+        imprimir= PrettyTable()
+        imprimir.field_names=['datetime', 'city','state','country','duration (seconds)','shape','latitude','longitude']
+        for ufo_data in lt.iterator(first_data):
+            imprimir.add_row([ ufo_data['datetime'], ufo_data['city'],ufo_data['state'],ufo_data['country'],
+                            ufo_data['duration (seconds)'],ufo_data['shape'],str(round(float(ufo_data['latitude']),2)),str(round(float(ufo_data['longitude']),2))])
+        
+                
+                
+        last_data = lt.subList(total,lt.size(total)-4,5)
+        for ufo_data in lt.iterator(last_data):
+            imprimir.add_row([ ufo_data['datetime'], ufo_data['city'],ufo_data['state'],ufo_data['country'],
+                            ufo_data['duration (seconds)'],ufo_data['shape'],str(round(float(ufo_data['latitude']),2)),str(round(float(ufo_data['longitude']),2))])
+        print(imprimir)
+    elif sightings > 0:
+        imprimir= PrettyTable()
+        imprimir.field_names=['datetime', 'city','state','country','duration (seconds)','shape','latitude','longitude']
+        for ufo_data in lt.iterator(total):
+            imprimir.add_row([ ufo_data['datetime'], ufo_data['city'],ufo_data['state'],ufo_data['country'],
+                            ufo_data['duration (seconds)'],ufo_data['shape'],str(round(float(ufo_data['latitude']),2)),str(round(float(ufo_data['longitude']),2))])
+        print(imprimir)
+    else:
+        print('No hay avistamientos dentro de la zona geográfica.')
 
 def printMenu():
     print("\n")
@@ -83,6 +153,8 @@ def printMenu():
     print("1- Inicializar Analizador")
     print("2- Cargar información en el catálogo")
     print("3- Contar los avistamientos en una ciudad")
+    print("6- Contar los avistamientos en un rango de fechas")
+    print("7- Contar los avistamientos en una zona geográficas")
     print("0- Salir")
     print("*******************************************")
 
@@ -115,6 +187,26 @@ while True:
         print('-'*80,'\n')
         print('-'*80)
         printSightingsByCity(total, city)
+        input('Presione "Enter" para continuar.')
+    elif int(inputs[0]) == 6:
+        print("\nBuscando y listando cronológicamente los avistamientos en un rango de fechas.")
+        initial_date = input("Fecha inicial del rango: ")
+        final_date = input("Fecha final del rango: ")
+        controller.create_date_index(cont)
+        total = controller.getSightingsByDate(cont, initial_date, final_date)
+        print('-'*80)
+        printSightingsByDate(total, initial_date, final_date)
+        input('Presione "Enter" para continuar.')
+    elif int(inputs[0]) == 7:
+        print("\nBuscando y listando los avistamientos para una zona geográfica.")
+        longitude_min = input("Longitud inicial de la zona geográfica: ")
+        longitude_max= input("Longitud final de la zona geográfica: ")
+        latitude_min = input("Latitud inicial de la zona geográfica: ")
+        latitude_max = input("Latitud final de la zona geográfica: ")
+        controller.create_coord_index(cont)
+        total = controller.getSightingsByGeography(cont,longitude_min,longitude_max,latitude_min,latitude_max)
+        print('-'*80)
+        printSightingsByGeography(total)
         input('Presione "Enter" para continuar.')
 
     else:
