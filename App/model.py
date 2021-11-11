@@ -101,10 +101,10 @@ def create_duration_index(catalog):
         duration_info = ufo_data['duration (seconds)']
         country_info = ufo_data['country']
         city_info= ufo_data['city']
+        country_city= country_info + city_info
         if om.contains(duration_index,duration_info):
             date_index = om.get(duration_index,duration_info)['value']
             if om.contains(date_index,country_info) and om.contains(date_index,city_info):
-                country_city= country_info + city_info
                 list_UFOs = om.get(date_index,country_city)['value'] 
                 lt.addLast(list_UFOs, ufo_data)
             else:
