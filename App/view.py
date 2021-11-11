@@ -224,6 +224,7 @@ def printMenu():
     print("1- Inicializar Analizador")
     print("2- Cargar información en el catálogo")
     print("3- Contar los avistamientos en una ciudad")
+    print("4- Contar los avistamientos en un rango de duración")
     print("5- Contar los avistamientos por Hora/Minuto del día")
     print("6- Contar los avistamientos en un rango de fechas")
     print("7- Contar los avistamientos en una zona geográficas")
