@@ -45,6 +45,9 @@ def load_UFOs(catalog):
 def create_city_index(catalog):
     model.create_city_index(catalog)
 
+def create_time_index(catalog):
+    model.create_time_index(catalog)
+
 def create_date_index(catalog):
     model.create_date_index(catalog)
 
@@ -57,24 +60,26 @@ def create_coord_index(catalog):
 def UFOsSize(catalog):
     return model.UFOsSize(catalog)
 
-def indexHeight(catalog):
-    return model.indexHeight(catalog)
+def indexHeight(catalog,index):
+    return model.indexHeight(catalog,index)
 
 
-def indexSize(catalog):
-    return model.indexSize(catalog)
+def indexSize(catalog,index):
+    return model.indexSize(catalog,index)
 
 
-def minKey(catalog):
-    return model.minKey(catalog)
+def minKey(catalog,index):
+    return model.minKey(catalog,index)
 
-def maxKey(catalog):
-    return model.maxKey(catalog)
+def maxKey(catalog,index):
+    return model.maxKey(catalog,index)
 
 
 def getSightingsByCity(catalog, city):
     return model.getSightingsByCity(catalog, city)
 
+def getSightingsByTime(catalog, time_min, time_max):
+    return model.getSightingsByTime(catalog,time_min,time_max)
 
 def getSightingsByDate(catalog, initial_date, final_date):
     return model.getSightingsByDate(catalog, initial_date,final_date)

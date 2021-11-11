@@ -25,6 +25,7 @@ import sys
 import controller
 from DISClib.ADT import list as lt
 from DISClib.ADT import orderedmap as om
+import folium
 assert cf
 from prettytable import PrettyTable
 
@@ -74,6 +75,41 @@ def printSightingsByCity(total, city):
                 imprimir.add_row([ ufo_data['datetime'], ufo_data['city'],ufo_data['country'],
                                 ufo_data['duration (seconds)'],ufo_data['shape']])
         print(imprimir)
+
+def printSightingsByTime(total):
+    last_time, last_sightings, sightings = total
+    if lt.size(sightings) > 0:
+        print('Se encontraron un total de',lt.size(sightings),'avistamientos en el rango de horas dado.\n')
+        imprimir= PrettyTable()
+        imprimir.field_names=['date', 'count']
+        imprimir.add_row([last_time,last_sightings])
+        print(imprimir)
+    print('-'*80)
+
+    if lt.size(sightings) > 6:
+        first_data = lt.subList(sightings,1,3)
+        imprimir= PrettyTable()
+        imprimir.field_names=['datetime', 'city','state','country','duration (seconds)','shape']
+        for ufo_data in lt.iterator(first_data):
+            imprimir.add_row([ ufo_data['datetime'], ufo_data['city'],ufo_data['state'],ufo_data['country'],
+                            ufo_data['duration (seconds)'],ufo_data['shape']])
+        
+                
+                
+        last_data = lt.subList(sightings,lt.size(sightings)-2,3)
+        for ufo_data in lt.iterator(last_data):
+            imprimir.add_row([ ufo_data['datetime'], ufo_data['city'],ufo_data['state'],ufo_data['country'],
+                            ufo_data['duration (seconds)'],ufo_data['shape']])
+        print(imprimir)
+    elif lt.size(sightings) > 0:
+        imprimir= PrettyTable()
+        imprimir.field_names=['datetime', 'city','state','country','duration (seconds)','shape','latitude','longitude']
+        for ufo_data in lt.iterator(sightings):
+            imprimir.add_row([ ufo_data['datetime'], ufo_data['city'],ufo_data['state'],ufo_data['country'],
+                            ufo_data['duration (seconds)'],ufo_data['shape']])
+        print(imprimir)
+    else:
+        print('No hay avistamientos dentro del rango de horas dado.')
 
 def printSightingsByDate(total,initial_date,final_date):
     dates,final_dates = total
@@ -153,6 +189,7 @@ def printMenu():
     print("1- Inicializar Analizador")
     print("2- Cargar información en el catálogo")
     print("3- Contar los avistamientos en una ciudad")
+    print("5- Contar los avistamientos por Hora/Minuto del día")
     print("6- Contar los avistamientos en un rango de fechas")
     print("7- Contar los avistamientos en una zona geográficas")
     print("0- Salir")
@@ -179,14 +216,31 @@ while True:
         city = input("Nombre de la ciudad a consultar: ")
         controller.create_city_index(cont)
         total = controller.getSightingsByCity(cont, city)
+        index = 'city_index'
         print('-'*80)
-        print('Altura del arbol: ' + str(controller.indexHeight(cont)))
-        print('Elementos en el arbol: ' + str(controller.indexSize(cont)))
-        print('Menor Llave: ' + str(controller.minKey(cont)))
-        print('Mayor Llave: ' + str(controller.maxKey(cont)))
+        print('Altura del arbol: ' + str(controller.indexHeight(cont,index)))
+        print('Elementos en el arbol: ' + str(controller.indexSize(cont,index)))
+        print('Menor Llave: ' + str(controller.minKey(cont,index)))
+        print('Mayor Llave: ' + str(controller.maxKey(cont,index)))
         print('-'*80,'\n')
         print('-'*80)
         printSightingsByCity(total, city)
+        input('Presione "Enter" para continuar.')
+    elif int(inputs[0]) == 5:
+        print("\nBuscando y listando los avistamientos por Hora/Minutos del día.")
+        time_min = input("Tiempo inicial dl rango (HH:MM): ")+":00"
+        time_max= input("Tiempo final dl rango (HH:MM): ")+":00"
+        controller.create_time_index(cont)
+        total = controller.getSightingsByTime(cont,time_min,time_max)
+        index = 'time_index'
+        print('-'*80)
+        print('Altura del arbol: ' + str(controller.indexHeight(cont,index)))
+        print('Elementos en el arbol: ' + str(controller.indexSize(cont,index)))
+        print('Menor Llave: ' + str(controller.minKey(cont,index)))
+        print('Mayor Llave: ' + str(controller.maxKey(cont,index)))
+        print('-'*80,'\n')
+        print('-'*80)
+        printSightingsByTime(total)
         input('Presione "Enter" para continuar.')
     elif int(inputs[0]) == 6:
         print("\nBuscando y listando cronológicamente los avistamientos en un rango de fechas.")
@@ -194,6 +248,13 @@ while True:
         final_date = input("Fecha final del rango: ")
         controller.create_date_index(cont)
         total = controller.getSightingsByDate(cont, initial_date, final_date)
+        index = 'date_index'
+        print('-'*80)
+        print('Altura del arbol: ' + str(controller.indexHeight(cont,index)))
+        print('Elementos en el arbol: ' + str(controller.indexSize(cont,index)))
+        print('Menor Llave: ' + str(controller.minKey(cont,index)))
+        print('Mayor Llave: ' + str(controller.maxKey(cont,index)))
+        print('-'*80,'\n')
         print('-'*80)
         printSightingsByDate(total, initial_date, final_date)
         input('Presione "Enter" para continuar.')
@@ -205,6 +266,13 @@ while True:
         latitude_max = input("Latitud final de la zona geográfica: ")
         controller.create_coord_index(cont)
         total = controller.getSightingsByGeography(cont,longitude_min,longitude_max,latitude_min,latitude_max)
+        index = 'coord_index'
+        print('-'*80)
+        print('Altura del arbol: ' + str(controller.indexHeight(cont,index)))
+        print('Elementos en el arbol: ' + str(controller.indexSize(cont,index)))
+        print('Menor Llave: ' + str(controller.minKey(cont,index)))
+        print('Mayor Llave: ' + str(controller.maxKey(cont,index)))
+        print('-'*80,'\n')
         print('-'*80)
         printSightingsByGeography(total)
         input('Presione "Enter" para continuar.')
