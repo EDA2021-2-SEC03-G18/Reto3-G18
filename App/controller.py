@@ -44,6 +44,9 @@ def load_UFOs(catalog):
 
 def create_city_index(catalog):
     model.create_city_index(catalog)
+    
+def create_duration_index(catalog):
+    model.create_duration_index(catalog)
 
 def create_time_index(catalog):
     model.create_time_index(catalog)
@@ -77,6 +80,9 @@ def maxKey(catalog,index):
 
 def getSightingsByCity(catalog, city):
     return model.getSightingsByCity(catalog, city)
+    
+def getSightingsByDuration(catalog,duration_min,duration_max):
+    return model.getSightingsByDuration(catalog,duration_min,duration_max)
 
 def getSightingsByTime(catalog, time_min, time_max):
     return model.getSightingsByTime(catalog,time_min,time_max)

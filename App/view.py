@@ -110,6 +110,42 @@ def printSightingsByTime(total):
     else:
         print('No hay avistamientos dentro del rango de horas dado.')
 
+
+def printSightingsByDuration(total):
+    last_duration, last_sightings, sightings = total
+    if lt.size(sightings) > 0:
+        print('Se encontraron un total de',lt.size(sightings),'avistamientos en el rango de duración dado.\n')
+        imprimir= PrettyTable()
+        imprimir.field_names=['duration (seconds)', 'count']
+        imprimir.add_row([last_duration,last_sightings])
+        print(imprimir)
+    print('-'*80)
+
+    if lt.size(sightings) > 6:
+        first_data = lt.subList(sightings,1,3)
+        imprimir= PrettyTable()
+        imprimir.field_names=['datetime', 'city','state','country','duration (seconds)','shape']
+        for ufo_data in lt.iterator(first_data):
+            imprimir.add_row([ ufo_data['datetime'], ufo_data['city'],ufo_data['state'],ufo_data['country'],
+                            ufo_data['duration (seconds)'],ufo_data['shape']])
+        
+                
+                
+        last_data = lt.subList(sightings,lt.size(sightings)-2,3)
+        for ufo_data in lt.iterator(last_data):
+            imprimir.add_row([ ufo_data['datetime'], ufo_data['city'],ufo_data['state'],ufo_data['country'],
+                            ufo_data['duration (seconds)'],ufo_data['shape']])
+        print(imprimir)
+    elif lt.size(sightings) > 0:
+        imprimir= PrettyTable()
+        imprimir.field_names=['datetime', 'city','state','country','duration (seconds)','shape','latitude','longitude']
+        for ufo_data in lt.iterator(sightings):
+            imprimir.add_row([ ufo_data['datetime'], ufo_data['city'],ufo_data['state'],ufo_data['country'],
+                            ufo_data['duration (seconds)'],ufo_data['shape']])
+        print(imprimir)
+    else:
+        print('No hay avistamientos dentro del rango de duración dado.')
+
 def printSightingsByDate(total,initial_date,final_date):
     dates,final_dates = total
     print('Hay',lt.size(final_dates),'avistamiento(s) de OVNI(s) como más antiguo(s).')
@@ -225,10 +261,26 @@ while True:
         print('-'*80)
         printSightingsByCity(total, city)
         input('Presione "Enter" para continuar.')
+    elif int(inputs[0]) == 4:
+        print("\nBuscando y listando los avistamientos por rango de duración.")
+        duration_min = input("Duración inicial del rango: ")
+        duration_max= input("Duración final del rango: ")
+        controller.create_duration_index(cont)
+        total = controller.getSightingsByDuration(cont,duration_min,duration_max)
+        index = 'duration_index'
+        print('-'*80)
+        print('Altura del arbol: ' + str(controller.indexHeight(cont,index)))
+        print('Elementos en el arbol: ' + str(controller.indexSize(cont,index)))
+        print('Menor Llave: ' + str(controller.minKey(cont,index)))
+        print('Mayor Llave: ' + str(controller.maxKey(cont,index)))
+        print('-'*80,'\n')
+        print('-'*80)
+        printSightingsByDuration(total)
+        input('Presione "Enter" para continuar.')
     elif int(inputs[0]) == 5:
         print("\nBuscando y listando los avistamientos por Hora/Minutos del día.")
-        time_min = input("Tiempo inicial dl rango (HH:MM): ")+":00"
-        time_max= input("Tiempo final dl rango (HH:MM): ")+":00"
+        time_min = input("Tiempo inicial del rango (HH:MM): ")+":00"
+        time_max= input("Tiempo final del rango (HH:MM): ")+":00"
         controller.create_time_index(cont)
         total = controller.getSightingsByTime(cont,time_min,time_max)
         index = 'time_index'

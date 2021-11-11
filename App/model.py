@@ -94,6 +94,30 @@ def create_time_index(catalog):
             om.put(date_index,date_info,list_UFOs)
             om.put(time_index,time_info,date_index)
 
+def create_duration_index(catalog):
+    catalog['duration_index'] = om.newMap(omaptype='RBT', comparefunction=compareDuration)
+    duration_index = catalog['duration_index']
+    for ufo_data in lt.iterator(catalog['UFOs']):
+        duration_info = ufo_data['duration (seconds)']
+        country_info = ufo_data['country']
+        city_info= ufo_data['city']
+        if om.contains(duration_index,duration_info):
+            date_index = om.get(duration_index,duration_info)['value']
+            if om.contains(date_index,country_info) and om.contains(date_index,city_info):
+                country_city= country_info + city_info
+                list_UFOs = om.get(date_index,country_city)['value'] 
+                lt.addLast(list_UFOs, ufo_data)
+            else:
+                list_UFOs = lt.newList()
+                lt.addLast(list_UFOs,ufo_data)
+                om.put(date_index,country_city,list_UFOs)
+        else:
+            date_index = om.newMap(omaptype='RBT', comparefunction=compareNames)
+            list_UFOs = lt.newList()
+            lt.addLast(list_UFOs,ufo_data)
+            om.put(date_index,country_city,list_UFOs)
+            om.put(duration_index,duration_info,date_index)
+
 def create_date_index(catalog):
     catalog['date_index'] = om.newMap(omaptype='RBT', comparefunction=compareDates)
     date_index = catalog['date_index']
@@ -186,6 +210,25 @@ def getSightingsByTime(catalog,time_min,time_max):
                 lt.addLast(ufo_list,ufo)
     return latest_time, latest_sightings, ufo_list
 
+    
+def getSightingsByDuration(catalog,duration_min,duration_max):
+    duration_index = catalog['duration_index']
+    ufo_list = lt.newList()
+    latest_duration = om.maxKey(duration_index)
+    latest_dates = om.get(duration_index,latest_duration)['value']
+    latest_sightings = 0
+    for date in lt.iterator(om.keySet(latest_dates)):
+        latest_sightings += lt.size(om.get(latest_dates,date))
+    keys_duration = om.keys(duration_index,duration_min,duration_max)
+    for key_duration in lt.iterator(keys_duration):
+        country_city_index = om.get(duration_index,key_duration)['value']
+        for key_duration in lt.iterator(om.keySet(country_city_index)):
+            ufo_info = om.get(country_city_index,key_duration)['value']
+            for ufo in lt.iterator(ufo_info):
+                lt.addLast(ufo_list,ufo)
+    return latest_duration, latest_sightings, ufo_list
+
+
 def getSightingsByDate(catalog,initial_date,final_date):
     date_index = catalog['date_index']
     dates = lt.newList()
@@ -214,7 +257,7 @@ def getSightingsByGeography(catalog,longitude_min,longitude_max,latitude_min,lat
 # Funciones utilizadas para comparar elementos dentro de una lista
 def compareNames(name1, name2):
     """
-    Compara dos fechas
+    Compara dos nombres
     """
     if (name1 == name2):
         return 0
@@ -225,11 +268,22 @@ def compareNames(name1, name2):
 
 def compareTime(time1, time2):
     """
-    Compara dos coordenadas
+    Compara dos tiempos
     """
     if (time1 == time2):
         return 0
     elif (time1 > time2):
+        return 1
+    else:
+        return -1
+
+def compareDuration(duration1, duration2):
+    """
+    Compara dos duraciones
+    """
+    if (duration1 == duration2):
+        return 0
+    elif (duration1 > duration2):
         return 1
     else:
         return -1
