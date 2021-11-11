@@ -25,7 +25,6 @@ import sys
 import controller
 from DISClib.ADT import list as lt
 from DISClib.ADT import orderedmap as om
-import folium
 assert cf
 from prettytable import PrettyTable
 
