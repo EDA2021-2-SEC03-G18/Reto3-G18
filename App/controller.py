@@ -37,7 +37,7 @@ def init_catalog():
 
 # Funciones para la carga de datos
 def load_UFOs(catalog):
-    filename = cf.data_dir + 'UFOS-utf8-small.csv'
+    filename = cf.data_dir + 'UFOS-utf8-large.csv'
     input_file = csv.DictReader(open(filename, encoding='utf-8'))
     for ufo_data in input_file:
         model.add_ufo(catalog, ufo_data)
