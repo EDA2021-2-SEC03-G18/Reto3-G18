@@ -43,7 +43,7 @@ def init_catalog():
     """
     Inicializa el catálogo de informacion sobre UFOs.
     """
-    catalog = {'UFOs':lt.newList(),'city_index':None, 'date_index':None, 'coord_index':None, 'time_index':None}
+    catalog = {'UFOs':lt.newList(),'city_index':None, 'date_index':None, 'coord_index':None, 'time_index':None, 'duration_index':None}
     return catalog
 # Funciones para agregar informacion al catalogo
 def add_ufo(catalog,ufo_data):
@@ -98,25 +98,25 @@ def create_duration_index(catalog):
     catalog['duration_index'] = om.newMap(omaptype='RBT', comparefunction=compareDuration)
     duration_index = catalog['duration_index']
     for ufo_data in lt.iterator(catalog['UFOs']):
-        duration_info = ufo_data['duration (seconds)']
+        duration_info = round(float(ufo_data['duration (seconds)']),1)
         country_info = ufo_data['country']
         city_info= ufo_data['city']
-        country_city= country_info + city_info
+        country_city=  city_info + '-' + country_info
         if om.contains(duration_index,duration_info):
-            date_index = om.get(duration_index,duration_info)['value']
-            if om.contains(date_index,country_info) and om.contains(date_index,city_info):
-                list_UFOs = om.get(date_index,country_city)['value'] 
+            country_city_index = om.get(duration_index,duration_info)['value']
+            if om.contains(country_city_index,country_city):
+                list_UFOs = om.get(country_city_index,country_city)['value'] 
                 lt.addLast(list_UFOs, ufo_data)
             else:
                 list_UFOs = lt.newList()
                 lt.addLast(list_UFOs,ufo_data)
-                om.put(date_index,country_city,list_UFOs)
+                om.put(country_city_index,country_city,list_UFOs)
         else:
-            date_index = om.newMap(omaptype='RBT', comparefunction=compareNames)
+            country_city_index = om.newMap(omaptype='RBT', comparefunction=compareLocation)
             list_UFOs = lt.newList()
             lt.addLast(list_UFOs,ufo_data)
-            om.put(date_index,country_city,list_UFOs)
-            om.put(duration_index,duration_info,date_index)
+            om.put(country_city_index,country_city,list_UFOs)
+            om.put(duration_index,duration_info,country_city_index)
 
 def create_date_index(catalog):
     catalog['date_index'] = om.newMap(omaptype='RBT', comparefunction=compareDates)
@@ -215,15 +215,16 @@ def getSightingsByDuration(catalog,duration_min,duration_max):
     duration_index = catalog['duration_index']
     ufo_list = lt.newList()
     latest_duration = om.maxKey(duration_index)
-    latest_dates = om.get(duration_index,latest_duration)['value']
+    latest_country_city = om.get(duration_index,latest_duration)['value']
     latest_sightings = 0
-    for date in lt.iterator(om.keySet(latest_dates)):
-        latest_sightings += lt.size(om.get(latest_dates,date))
+    for country_city in lt.iterator(om.keySet(latest_country_city)):
+        latest_sightings += lt.size(om.get(latest_country_city,country_city)['value'])
+    
     keys_duration = om.keys(duration_index,duration_min,duration_max)
     for key_duration in lt.iterator(keys_duration):
         country_city_index = om.get(duration_index,key_duration)['value']
-        for key_duration in lt.iterator(om.keySet(country_city_index)):
-            ufo_info = om.get(country_city_index,key_duration)['value']
+        for key_country_city in lt.iterator(om.keySet(country_city_index)):
+            ufo_info = om.get(country_city_index,key_country_city)['value']
             for ufo in lt.iterator(ufo_info):
                 lt.addLast(ufo_list,ufo)
     return latest_duration, latest_sightings, ufo_list
@@ -284,6 +285,17 @@ def compareDuration(duration1, duration2):
     if (duration1 == duration2):
         return 0
     elif (duration1 > duration2):
+        return 1
+    else:
+        return -1
+
+def compareLocation(loc1, loc2):
+    """
+    Compara dos nombres
+    """
+    if (loc1 == loc2):
+        return 0
+    elif (loc1 > loc2):
         return 1
     else:
         return -1

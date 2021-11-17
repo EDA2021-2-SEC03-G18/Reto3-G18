@@ -20,9 +20,13 @@
  * along withthis program.  If not, see <http://www.gnu.org/licenses/>.
  """
 
+from folium import plugins
 import config as cf
 import sys
 import controller
+import math as mt
+import folium
+from folium.plugins import BeautifyIcon
 from DISClib.ADT import list as lt
 from DISClib.ADT import orderedmap as om
 assert cf
@@ -127,9 +131,7 @@ def printSightingsByDuration(total):
         imprimir.field_names=['datetime', 'city','state','country','duration (seconds)','shape']
         for ufo_data in lt.iterator(first_data):
             imprimir.add_row([ ufo_data['datetime'], ufo_data['city'],ufo_data['state'],ufo_data['country'],
-                            ufo_data['duration (seconds)'],ufo_data['shape']])
-        
-                
+                            ufo_data['duration (seconds)'],ufo_data['shape']])        
                 
         last_data = lt.subList(sightings,lt.size(sightings)-2,3)
         for ufo_data in lt.iterator(last_data):
@@ -217,6 +219,21 @@ def printSightingsByGeography(total):
     else:
         print('No hay avistamientos dentro de la zona geográfica.')
 
+def createSightingsMap(data,total):
+    longitude_min,longitude_max,latitude_min,latitude_max=data
+    longitude = (mt.floor(float(longitude_min)) + mt.ceil(float(longitude_max)))/2
+    latitude= (mt.floor(float(latitude_min)) + mt.ceil(float(latitude_max)))/2
+    
+    m = folium.Map(location=[latitude,longitude], zoom_start=5)
+    folium.Rectangle([(float(latitude_max),float(longitude_max)),(float(latitude_min),float(longitude_min))],color="#3186cc",fill=True,fill_color="#3186cc").add_to(m)
+    tooltip = 'More Info'
+    for sighting in lt.iterator(total):
+        iframe = folium.IFrame('Date: ' + sighting['datetime'] + '<br>' + 'City: ' + sighting['city'] + '<br>' + 'Country: ' + sighting['country'] + '<br>' + 'Duration (seconds): ' + sighting['duration (seconds)'] + '<br>' + 'Shape: ' + sighting['shape'])
+        popup = folium.Popup(iframe, min_width=200, max_width=300)
+        folium.Marker([sighting['latitude'], sighting['longitude']], popup=popup, tooltip=tooltip).add_to(m)
+    m.save('index.html')
+
+
 def printMenu():
     print("\n")
     print("*******************************************")
@@ -264,8 +281,8 @@ while True:
         input('Presione "Enter" para continuar.')
     elif int(inputs[0]) == 4:
         print("\nBuscando y listando los avistamientos por rango de duración.")
-        duration_min = input("Duración inicial del rango: ")
-        duration_max= input("Duración final del rango: ")
+        duration_min = round(float(input("Duración inicial del rango: ")),1)
+        duration_max= round(float(input("Duración final del rango: ")),1)
         controller.create_duration_index(cont)
         total = controller.getSightingsByDuration(cont,duration_min,duration_max)
         index = 'duration_index'
@@ -316,6 +333,7 @@ while True:
         longitude_max= input("Longitud final de la zona geográfica: ")
         latitude_min = input("Latitud inicial de la zona geográfica: ")
         latitude_max = input("Latitud final de la zona geográfica: ")
+        data = [longitude_min,longitude_max,latitude_min,latitude_max]
         controller.create_coord_index(cont)
         total = controller.getSightingsByGeography(cont,longitude_min,longitude_max,latitude_min,latitude_max)
         index = 'coord_index'
@@ -327,6 +345,8 @@ while True:
         print('-'*80,'\n')
         print('-'*80)
         printSightingsByGeography(total)
+        input('Presione "Enter" para continuar.')
+        createSightingsMap(data,total)
         input('Presione "Enter" para continuar.')
 
     else:
